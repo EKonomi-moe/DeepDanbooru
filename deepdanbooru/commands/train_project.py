@@ -24,7 +24,16 @@ def export_model_as_float32(temporary_model, checkpoint_path, export_path):
     temporary_model.save(export_path, include_optimizer=False)
 
 
-def train_project(project_path, source_model):
+def train_project(project_path, source_model, load_as_md5=False, use_dbmem=False, no_md5_folder=False, gpu_memory_limit=0, load_as_id=False, use_one_folder=False):
+    if gpu_memory_limit != 0:
+        try:
+            gpus = tf.config.experimental.list_physical_devices('GPU')
+            if gpus:
+                #tf.config.experimental.set_memory_growth(gpus[0], True)
+                tf.config.experimental.set_virtual_device_configuration(gpus[0], [tf.config.experimental.VirtualDeviceConfiguration(memory_limit=gpu_memory_limit)])
+        except:
+            pass
+
     project_context_path = os.path.join(project_path, "project.json")
     project_context = dd.io.deserialize_from_json(project_context_path)
 
@@ -155,7 +164,7 @@ def train_project(project_path, source_model):
     )
 
     print(f"Loading database ... ")
-    image_records = dd.data.load_image_records(database_path, minimum_tag_count)
+    image_records = dd.data.load_image_records(database_path, minimum_tag_count, load_as_md5, use_dbmem, no_md5_folder, load_as_id, use_one_folder)
 
     # Checkpoint variables
     used_epoch = tf.Variable(0, dtype=tf.int64)

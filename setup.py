@@ -28,13 +28,13 @@ tensorflow_pkg = [
 setuptools.setup(
     name="deepdanbooru",
     version=version,
-    author="Kichang Kim",
-    author_email="admin@kanotype.net",
+    author="Kichang Kim, Ekonomi-moe",
+    author_email="admin@kanotype.net, github@ontdb.com",
     description="DeepDanbooru is AI based multi-label girl image classification system, "
     "implemented by using TensorFlow.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/KichangKim/DeepDanbooru",
+    url="https://github.com/Ekonomi-moe/DeepDanbooru",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",

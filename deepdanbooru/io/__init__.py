@@ -30,3 +30,9 @@ def get_image_file_paths_recursive(folder_path, patterns_string):
     patterns = patterns_string.split(",")
 
     return get_file_paths_in_directory(folder_path, patterns)
+
+def get_directory_list(path, patterns="*"):
+    return [
+        str(file_path)
+        for file_path in Path(path).rglob(patterns)
+    ]

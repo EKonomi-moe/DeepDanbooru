@@ -13,3 +13,6 @@ test.py
 *.h5
 *.txt
 *.json
+build/
+deepdanbooru.egg-info/
+dist/

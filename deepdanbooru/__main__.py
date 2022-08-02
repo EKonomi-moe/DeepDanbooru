@@ -36,6 +36,23 @@ def create_project(project_path):
 def download_tags(path, limit, minimum_post_count, overwrite):
     dd.commands.download_tags(path, limit, minimum_post_count, overwrite)
 
+@main.command("create-database")
+@click.option("--import-size", default=10, help="Import size for importing to sqlite3.")
+@click.option("--skip-unique", default=False, help="Skip unique tags.", is_flag=True)
+@click.option("--use-dbmem", default=False, help="Use database memory for importing to sqlite3.", is_flag=True)
+@click.option("--create-new", default=False, help="Create new database.", is_flag=True)
+@click.option("--insert-all", default=False, help="Insert all posts to database.", is_flag=True)
+@click.argument(
+    "json_path",
+    type=click.Path(exists=True, resolve_path=True, file_okay=False, dir_okay=True),
+    required=True
+)
+@click.argument(
+    "project_path",
+    type=click.Path(exists=True, resolve_path=True, file_okay=False, dir_okay=True),
+)
+def create_database(project_path, json_path, import_size, skip_unique, use_dbmem, create_new, insert_all):
+    dd.commands.create_database(project_path, json_path, import_size, skip_unique, use_dbmem, create_new, insert_all)
 
 @main.command("make-training-database")
 @click.argument(
@@ -85,8 +102,26 @@ def make_training_database(
         vacuum,
     )
 
+@main.command("move-to-md5")
+@click.option("--use-threads", help="Use threads.", is_flag=True)
+@click.option("--threads", default=5, help="Threads count.")
+@click.argument(
+    "source_path",
+    type=click.Path(exists=True, resolve_path=True, file_okay=False, dir_okay=True),
+)
+@click.argument(
+    "destination_path",
+    type=click.Path(exists=False, resolve_path=True, file_okay=False, dir_okay=True),
+)
+def move_to_md5(source_path, destination_path ,use_threads, threads):
+    dd.commands.move_to_md5(source_path, destination_path, use_threads, threads)
 
 @main.command("train-project")
+@click.option("--use-dbmem", default=False, help="Use database memory for importing to sqlite3.", is_flag=True)
+@click.option("--load-as-md5", default=False, help="Load as md5.", is_flag=True)
+@click.option("--no-md5-folder", default=False, help="Do not use md5 2 word folder.", is_flag=True)
+@click.option("--load-as-id", default=False, help="Load as id.", is_flag=True)
+@click.option("--use-one-folder", default=False, help="Load as one id folder.", is_flag=True)
 @click.argument(
     "project_path",
     type=click.Path(exists=True, resolve_path=True, file_okay=False, dir_okay=True),
@@ -95,8 +130,12 @@ def make_training_database(
     "--source-model",
     type=click.Path(exists=True, resolve_path=True, file_okay=True, dir_okay=False),
 )
-def train_project(project_path, source_model):
-    dd.commands.train_project(project_path, source_model)
+@click.option(
+    "--gpu-memory-limit",
+    default=0, help="GPU memory limit for training.", type=click.INT
+)
+def train_project(project_path, source_model, use_dbmem, load_as_md5, no_md5_folder, gpu_memory_limit, load_as_id, use_one_folder):
+    dd.commands.train_project(project_path, source_model, use_dbmem, load_as_md5, no_md5_folder, gpu_memory_limit, load_as_id, use_one_folder)
 
 
 @main.command(
