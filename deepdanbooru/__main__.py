@@ -24,6 +24,16 @@ def main():
 def create_project(project_path):
     dd.commands.create_project(project_path)
 
+@main.command("download-image")
+@click.option("--start-range", "-s", type=int, help="Start range of folder ID.")
+@click.option("--end-range", "-e", type=int, default=999, help="End range of folder ID.")
+@click.option("--threads", "-t", type=int, default=5, help="Number of threads.")
+@click.argument(
+    "download_path",
+    type=click.Path(exists=False, resolve_path=True, file_okay=False, dir_okay=True),
+)
+def download_image(download_path, start_range, end_range, threads):
+    dd.commands.download_image(download_path, start_range, end_range, threads)
 
 @main.command("download-tags")
 @click.option("--limit", default=10000, help="Limit for each category tag count.")
