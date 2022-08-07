@@ -30,7 +30,7 @@ def create_project(project_path):
 @click.option("--threads", "-t", type=int, default=5, help="Number of threads.")
 @click.argument(
     "download_path",
-    type=click.Path(exists=False, resolve_path=True, file_okay=False, dir_okay=True),
+    type=str
 )
 def download_image(download_path, start_range, end_range, threads):
     dd.commands.download_image(download_path, start_range, end_range, threads)
