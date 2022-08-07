@@ -6,7 +6,10 @@ from threading import Thread
 def thread_download(i, download_path_str, donecheck_path, queue):
     download_path_str = download_path_str.replace("\\", "/")
     if download_path_str[-1] == "/": download_path_str = download_path_str[:-1]
-    system(f"rsync -avz --delete rsync://176.9.41.242:873/danbooru2021/original/{str(i).zfill(4)}/ {download_path_str}/{str(i).zfill(4)}/")
+    try:
+        system(f"rsync -avz --delete rsync://176.9.41.242:873/danbooru2021/original/{str(i).zfill(4)}/ {download_path_str}/{str(i).zfill(4)}/")
+    except KeyboardInterrupt:
+        return
     system(f"echo {str(i)} >> {donecheck_path}\n")
     queue.pop(str(i))
     pass
@@ -27,15 +30,18 @@ def download_image(download_path_str, start_range, end_range=999, threads=5):
             f.close()
             continue
         f.close()
-
         while True:
-            if len(queue) < threads:
-                thr = Thread(target=thread_download, args=(i, download_path_str, donecheck_path, queue))
-                thr.daemon = True
-                thr.start()
-                queue.update({str(i): thr})
+            try:
+                if len(queue) < threads:
+                    thr = Thread(target=thread_download, args=(i, download_path_str, donecheck_path, queue))
+                    thr.daemon = True
+                    thr.start()
+                    queue.update({str(i): thr})
+                    break
+                else:
+                    sleep(0.3)
+            except KeyboardInterrupt:
                 break
-            else:
-                sleep(0.3)
+        
     pass
 
