@@ -17,6 +17,7 @@ def download_image(download_path, start_range, end_range=999, threads=5):
     download_path = Path(download_path)
     download_path.mkdir(parents=True, exist_ok=True)
     donecheck_path = download_path / "donecheck.txt"
+    donecheck_path.touch()
     queue = {}
     for i in range(start_range, end_range+1):
         f = open(donecheck_path, "r")
