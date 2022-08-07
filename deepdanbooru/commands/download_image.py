@@ -5,6 +5,7 @@ from threading import Thread
 
 def thread_download(i, download_path_str, donecheck_path, queue):
     download_path_str = download_path_str.replace("\\", "/")
+    if download_path_str[-1] == "/": download_path_str = download_path_str[:-1]
     system(f"rsync -avz --delete rsync://176.9.41.242:873/danbooru2021/original/{str(i).zfill(4)}/ {download_path_str}/{str(i).zfill(4)}/")
     system(f"echo {str(i)} >> {donecheck_path}\n")
     queue.pop(str(i))
