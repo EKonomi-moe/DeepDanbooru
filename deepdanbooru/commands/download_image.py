@@ -38,8 +38,9 @@ def download_image(download_path_str, start_range, end_range=999, threads=5):
             f.close()
             continue
         f.close()
-        while True:
-            try:
+        try:
+            while True:
+                if queue.exit: return
                 if len(queue.queue) < threads:
                     thr = Thread(target=thread_download, args=(i, download_path_str, donecheck_path, queue))
                     thr.daemon = True
@@ -48,9 +49,9 @@ def download_image(download_path_str, start_range, end_range=999, threads=5):
                     break
                 else:
                     sleep(0.3)
-            except KeyboardInterrupt:
-                queue.exit = True
-                return
+        except KeyboardInterrupt:
+            queue.exit = True
+            return
         
     while True:
         if len(queue.queue) == 0:
