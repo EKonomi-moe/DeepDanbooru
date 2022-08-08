@@ -1,3 +1,7 @@
+class dummy():
+    def __init__(self):
+        pass
+
 from pathlib import Path
 from time import sleep
 from os import system
@@ -11,7 +15,7 @@ def thread_download(i, download_path_str, donecheck_path, queue):
     except KeyboardInterrupt:
         return
     system(f"echo {str(i)} >> {donecheck_path}\n")
-    queue.pop(str(i))
+    queue.queue.pop(str(i))
     pass
 
 
@@ -23,7 +27,8 @@ def download_image(download_path_str, start_range, end_range=999, threads=5):
     download_path.mkdir(parents=True, exist_ok=True)
     donecheck_path = download_path / "donecheck.txt"
     donecheck_path.touch()
-    queue = {}
+    queue = dummy()
+    queue.queue = {}
     for i in range(start_range, end_range+1):
         f = open(donecheck_path, "r")
         if str(i) in f.read():
@@ -32,11 +37,11 @@ def download_image(download_path_str, start_range, end_range=999, threads=5):
         f.close()
         while True:
             try:
-                if len(queue) < threads:
+                if len(queue.queue) < threads:
                     thr = Thread(target=thread_download, args=(i, download_path_str, donecheck_path, queue))
                     thr.daemon = True
                     thr.start()
-                    queue.update({str(i): thr})
+                    queue.queue.update({str(i): thr})
                     break
                 else:
                     sleep(0.3)
