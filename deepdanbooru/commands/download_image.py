@@ -7,17 +7,21 @@ from time import sleep
 from os import system
 from threading import Thread
 
-def thread_download(i, download_path_str, donecheck_path, queue):
+def thread_download(i, download_path_str, donecheck_path, queue, retry = False):
     if queue.exit: return
     download_path_str = download_path_str.replace("\\", "/")
     if download_path_str[-1] == "/": download_path_str = download_path_str[:-1]
-    try:
-        system(f"rsync -avz --delete rsync://176.9.41.242:873/danbooru2021/original/{str(i).zfill(4)}/ {download_path_str}/{str(i).zfill(4)}/")
-    except KeyboardInterrupt:
+    rtncode = system(f"rsync -avz --delete rsync://176.9.41.242:873/danbooru2021/original/{str(i).zfill(4)}/ {download_path_str}/{str(i).zfill(4)}/")
+    if rtncode == 0:
+        system(f"echo {str(i)} >> {donecheck_path}\n")
+        queue.queue.pop(str(i))
+    elif rtncode == 20:
+        queue.exit = True
         return
-    if queue.exit: return
-    system(f"echo {str(i)} >> {donecheck_path}\n")
-    queue.queue.pop(str(i))
+    else:
+        print(f"Error {i} :: {rtncode}")
+        if retry: return
+        thread_download(i, download_path_str, donecheck_path, queue, True)
     pass
 
 
