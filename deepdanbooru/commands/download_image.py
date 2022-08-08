@@ -48,10 +48,10 @@ def download_image(download_path_str, start_range, end_range=999, threads=5):
             except KeyboardInterrupt:
                 break
         
-        while True:
-            if len(queue.queue) == 0:
-                break
-            sleep(0.3)
+    while True:
+        if len(queue.queue) == 0:
+            break
+        sleep(0.3)
         
     pass
 
