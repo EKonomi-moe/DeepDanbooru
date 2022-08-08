@@ -8,12 +8,14 @@ from os import system
 from threading import Thread
 
 def thread_download(i, download_path_str, donecheck_path, queue):
+    if queue.exit: return
     download_path_str = download_path_str.replace("\\", "/")
     if download_path_str[-1] == "/": download_path_str = download_path_str[:-1]
     try:
         system(f"rsync -avz --delete rsync://176.9.41.242:873/danbooru2021/original/{str(i).zfill(4)}/ {download_path_str}/{str(i).zfill(4)}/")
     except KeyboardInterrupt:
         return
+    if queue.exit: return
     system(f"echo {str(i)} >> {donecheck_path}\n")
     queue.queue.pop(str(i))
     pass
@@ -29,6 +31,7 @@ def download_image(download_path_str, start_range, end_range=999, threads=5):
     donecheck_path.touch()
     queue = dummy()
     queue.queue = {}
+    queue.exit = False
     for i in range(start_range, end_range+1):
         f = open(donecheck_path, "r")
         if str(i) in f.read():
@@ -46,7 +49,8 @@ def download_image(download_path_str, start_range, end_range=999, threads=5):
                 else:
                     sleep(0.3)
             except KeyboardInterrupt:
-                break
+                queue.exit = True
+                return
         
     while True:
         if len(queue.queue) == 0:
