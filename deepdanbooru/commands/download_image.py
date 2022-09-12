@@ -11,7 +11,7 @@ def thread_download(i, download_path_str, donecheck_path, queue, retry = False):
     if queue.exit: return
     download_path_str = download_path_str.replace("\\", "/")
     if download_path_str[-1] == "/": download_path_str = download_path_str[:-1]
-    rtncode = system(f"rsync -avz --delete rsync://176.9.41.242:873/danbooru2021/original/{str(i).zfill(4)}/ {download_path_str}/{str(i).zfill(4)}/ --exclude=*.mp4 --exclude=*.gif --exclude=*.zip --exclude=*.webm --exclude=*.swf")
+    rtncode = system(f"rsync -avz --delete rsync://176.9.41.242:873/danbooru2021/original/{str(i).zfill(4)}/ {download_path_str}/{str(i).zfill(4)}/ --exclude=*.mp4 --exclude=*.zip --exclude=*.webm --exclude=*.swf")
     if rtncode == 0:
         system(f"echo {str(i)} >> {donecheck_path}\n")
         queue.queue.pop(str(i))
