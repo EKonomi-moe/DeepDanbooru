@@ -35,9 +35,9 @@ def load_image_records(sqlite_path, minimum_tag_count, use_dbmem, load_as_md5, n
         typ = "md5"
         rows = []
         for filename in os.listdir(image_folder_path):
-            if filename.endswith(".jpg") or filename.endswith(".png") or filename.endswith(".jpeg"):
+            if filename.endswith(".jpg") or filename.endswith(".png") or filename.endswith(".jpeg") or filename.endswith(".webp"):
                 cursor.execute(
-                    "SELECT md5, file_ext, tag_string FROM posts WHERE (file_ext = 'png' OR file_ext = 'jpg' OR file_ext = 'jpeg') AND (md5 = '{md5}') AND (tag_count_general >= {count})".format(md5=filename.split(".")[0], count=minimum_tag_count)
+                    "SELECT md5, file_ext, tag_string FROM posts WHERE (file_ext = 'png' OR file_ext = 'jpg' OR file_ext = 'jpeg' OR file_ext = 'webp') AND (md5 = '{md5}') AND (tag_count_general >= {count})".format(md5=filename.split(".")[0], count=minimum_tag_count)
                 )
                 rows.append(cursor.fetchone())
         #        data.append((filename.split(".")[0], minimum_tag_count))
@@ -52,10 +52,10 @@ def load_image_records(sqlite_path, minimum_tag_count, use_dbmem, load_as_md5, n
         for filename in Path(image_folder_path).glob("**/*"):
             if filename.is_file():
                 #check endwith
-                if filename.suffix == ".jpg" or filename.suffix == ".png" or filename.suffix == ".jpeg":
+                if filename.suffix == ".jpg" or filename.suffix == ".png" or filename.suffix == ".jpeg" or filename.suffix == ".webp":
                     paths.append(filename.stem)
                     cursor.execute(
-                        "SELECT id, file_ext, tag_string FROM posts WHERE (file_ext = 'png' OR file_ext = 'jpg' OR file_ext = 'jpeg') AND (id = ?) AND (tag_count_general >= ?)",
+                        "SELECT id, file_ext, tag_string FROM posts WHERE (file_ext = 'png' OR file_ext = 'jpg' OR file_ext = 'jpeg' OR file_ext = 'webp') AND (id = ?) AND (tag_count_general >= ?)",
                         (filename.stem, minimum_tag_count)
                     )
                     rows.append(cursor.fetchone())
@@ -63,7 +63,7 @@ def load_image_records(sqlite_path, minimum_tag_count, use_dbmem, load_as_md5, n
     else:
         typ = "md5"
         cursor.execute(
-            "SELECT md5, file_ext, tag_string FROM posts WHERE (file_ext = 'png' OR file_ext = 'jpg' OR file_ext = 'jpeg') AND (tag_count_general >= ?) ORDER BY id",
+            "SELECT md5, file_ext, tag_string FROM posts WHERE (file_ext = 'png' OR file_ext = 'jpg' OR file_ext = 'jpeg' OR file_ext = 'webp') AND (tag_count_general >= ?) ORDER BY id",
             (minimum_tag_count,),
         )
 
