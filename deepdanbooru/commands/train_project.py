@@ -164,7 +164,7 @@ def train_project(project_path, source_model, load_as_md5=False, use_dbmem=False
     )
 
     print(f"Loading database ... ")
-    image_records = dd.data.load_image_records(database_path, minimum_tag_count, load_as_md5, use_dbmem, no_md5_folder, load_as_id, use_one_folder)
+    image_records = dd.data.load_image_records(project_path, database_path, minimum_tag_count, load_as_md5, use_dbmem, no_md5_folder, load_as_id, use_one_folder)
 
     # Checkpoint variables
     used_epoch = tf.Variable(0, dtype=tf.int64)
