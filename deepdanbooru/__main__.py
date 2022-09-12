@@ -216,7 +216,7 @@ def grad_cam(project_path, target_path, output_path, threshold):
 )
 @click.option(
     "--folder-filters",
-    default="*.[Pp][Nn][Gg],*.[Jj][Pp][Gg],*.[Jj][Pp][Ee][Gg],*.[Gg][Ii][Ff]",
+    default="*.[Pp][Nn][Gg],*.[Jj][Pp][Gg],*.[Jj][Pp][Ee][Gg],*.[Gg][Ii][Ff],*.[Ww][Ee][Bb][Pp]",
     help="Glob pattern for searching image files in folder. You can specify multiple patterns by separating comma. This is used when --allow-folder is enabled. Default:*.[Pp][Nn][Gg],*.[Jj][Pp][Gg],*.[Jj][Pp][Ee][Gg],*.[Gg][Ii][Ff]",
 )
 @click.option("--verbose", default=False, is_flag=True)

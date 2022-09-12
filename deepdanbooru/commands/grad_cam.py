@@ -48,6 +48,7 @@ def grad_cam(project_path, target_path, output_path, threshold):
             "*.[Jj][Pp][Gg]",
             "*.[Jj][Pp][Ee][Gg]",
             "*.[Gg][Ii][Ff]",
+            "*.[Ww][Ee][Bb][Pp]",
         ]
 
         taget_image_paths = dd.io.get_file_paths_in_directory(target_path, patterns)
