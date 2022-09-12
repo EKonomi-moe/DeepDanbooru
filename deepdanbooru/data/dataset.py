@@ -10,8 +10,8 @@ def load_tags(tags_path):
         return tags
 
 
-def load_image_records(sqlite_path, minimum_tag_count, use_dbmem, load_as_md5, no_md5_folder, load_as_id, use_one_folder):
-    if not os.path.exists(sqlite_path):
+def load_image_records(project_path, sqlite_path, minimum_tag_count, use_dbmem, load_as_md5, no_md5_folder, load_as_id, use_one_folder):
+    if not Path(sqlite_path).exists():
         raise Exception(f"SQLite database is not exists : {sqlite_path}")
     if use_dbmem:
         connection = sqlite3.connect(":memory:")
@@ -26,7 +26,7 @@ def load_image_records(sqlite_path, minimum_tag_count, use_dbmem, load_as_md5, n
     connection.row_factory = sqlite3.Row
     cursor = connection.cursor()
 
-    image_folder_path = os.path.join(os.path.dirname(sqlite_path), "images")
+    image_folder_path = Path(project_path) / "images"
     
     typ = ""
     paths = []
