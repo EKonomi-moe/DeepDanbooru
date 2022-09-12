@@ -4,7 +4,7 @@ import click
 
 import deepdanbooru as dd
 
-__version__ = "1.1.1"
+__version__ = "1.1.2"
 
 
 @click.version_option(prog_name="DeepDanbooru", version=__version__)
