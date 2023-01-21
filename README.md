@@ -35,9 +35,9 @@ To install it with tensorflow, add `tensorflow` extra package.
 ```
 > deepdanbooru create-project [your_project_folder]
 ```
-3. Prepare tag list. If you want to use latest tags, use following command. It downloads tag from Danbooru server.
+3. Prepare tag list. If you want to use latest tags, use following command. It downloads tag from Danbooru server. (Need Danbooru account and API key)
 ```
-> deepdanbooru download-tags [your_project_folder]
+> deepdanbooru download-tags [your_project_folder] --username [your_danbooru_account] --api-key [your_danbooru_api_key]
 ```
 4. (Option) Creating database from dataset. If you downloaded jsonfile from rsync, you can use this command
 ```

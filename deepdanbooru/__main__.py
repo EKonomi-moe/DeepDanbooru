@@ -1,8 +1,11 @@
 import sys
+from typing_extensions import Required
 
 import click
-
+import warnings
+import os
 import deepdanbooru as dd
+import tensorflow.lite as tflite
 
 __version__ = "1.1.2"
 
@@ -39,12 +42,16 @@ def download_image(download_path, start_range, end_range, threads):
 @click.option("--limit", default=10000, help="Limit for each category tag count.")
 @click.option("--minimum-post-count", default=500, help="Minimum post count for tag.")
 @click.option("--overwrite", help="Overwrite tags if exists.", is_flag=True)
+@click.option("--username", help="Danbooru username for authentication.", required=True)
+@click.option("--api-key", help="Danbooru API key for authentication.", required=True)
 @click.argument(
     "path",
     type=click.Path(exists=False, resolve_path=True, file_okay=False, dir_okay=True),
 )
-def download_tags(path, limit, minimum_post_count, overwrite):
-    dd.commands.download_tags(path, limit, minimum_post_count, overwrite)
+def download_tags(path, limit, minimum_post_count, overwrite, username, api_key):
+    dd.commands.download_tags(
+        path, limit, minimum_post_count, overwrite, username, api_key
+    )
 
 @main.command("create-database")
 @click.option("--import-size", default=10, help="Import size for importing to sqlite3.")
@@ -215,13 +222,19 @@ def grad_cam(project_path, target_path, output_path, threshold):
     help="If this option is enabled, TARGET_PATHS can be folder path and all images (using --folder-filters) in that folder is estimated recursively. If there are file and folder which has same name, the file is skipped and only folder is used.",
 )
 @click.option(
+    "--save-txt",
+    default=False,
+    is_flag=True,
+    help="Enable this option to save tags to a txt file with the same filename.",
+)
+@click.option(
     "--folder-filters",
     default="*.[Pp][Nn][Gg],*.[Jj][Pp][Gg],*.[Jj][Pp][Ee][Gg],*.[Gg][Ii][Ff]",
     help="Glob pattern for searching image files in folder. You can specify multiple patterns by separating comma. This is used when --allow-folder is enabled. Default:*.[Pp][Nn][Gg],*.[Jj][Pp][Gg],*.[Jj][Pp][Ee][Gg],*.[Gg][Ii][Ff]",
 )
 @click.option("--verbose", default=False, is_flag=True)
 def evaluate(
-    target_paths,
+    target_paths, # I guess its this one
     project_path,
     model_path,
     tags_path,
@@ -229,9 +242,13 @@ def evaluate(
     allow_gpu,
     compile_model,
     allow_folder,
+    save_txt,
     folder_filters,
     verbose,
 ):
+    if verbose:
+        warnings.filterwarnings("always")
+        os.environ['TF_CPP_MIN_LOG_LEVEL'] = '0'
     dd.commands.evaluate(
         target_paths,
         project_path,
@@ -241,9 +258,38 @@ def evaluate(
         allow_gpu,
         compile_model,
         allow_folder,
+        save_txt,
         folder_filters,
         verbose,
     )
+
+@main.command("conv2tflite", help="Convert saved model into tflite model.")
+@click.option(
+    "--project-path",
+    type=click.Path(exists=True, resolve_path=True, file_okay=False, dir_okay=True),
+    help="Project path. If you want to use specific model and tags, use --model-path and --tags-path options.",
+)
+@click.option(
+    "--model-path",
+    type=click.Path(exists=True, resolve_path=True, file_okay=True, dir_okay=False),
+)
+@click.option(
+    "--save-path",
+    type=click.Path(resolve_path=True, file_okay=True, dir_okay=False),
+)
+@click.option("--optimize-default", default=True, is_flag=True)
+@click.option("--optimize-experimental-sparsity", default=False, is_flag=True)
+@click.option("--verbose", default=False, is_flag=True)
+def conv2tflite(project_path, model_path, save_path, optimize_default, optimize_experimental_sparsity, verbose):
+    if verbose:
+        warnings.filterwarnings("always")
+        os.environ['TF_CPP_MIN_LOG_LEVEL'] = '0'
+    if not optimize_default and not optimize_experimental_sparsity:
+        raise Exception("optimization method must be specified")
+    op = []
+    if optimize_default: op = [tflite.Optimize.DEFAULT]
+    if optimize_experimental_sparsity: op.append(tflite.Optimize.EXPERIMENTAL_SPARSITY)
+    dd.commands.convert_to_tflite_from_from_saved_model(project_path, model_path, save_path, op, verbose=verbose)
 
 
 if __name__ == "__main__":

@@ -208,7 +208,7 @@ def train_project(project_path, source_model, load_as_md5=False, use_dbmem=False
         epoch_random = random.Random(int(random_seed))
         epoch_random.shuffle(image_records)
 
-        # Udpate learning rate
+        # Update learning rate
         if learning_rates:
             for learning_rate_per_epoch in learning_rates:
                 if learning_rate_per_epoch["used_epoch"] <= int(used_epoch):
